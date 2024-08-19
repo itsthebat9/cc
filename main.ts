@@ -50,7 +50,8 @@ function spawn_pacman () {
     pacman.setStayInScreen(true)
 }
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
-    game.gameOver(false)
+    info.changeLifeBy(-1)
+    otherSprite.setPosition(randint(10, 50), randint(10, 50))
 })
 function spawn_cb () {
     cb = sprites.create(img`
@@ -83,3 +84,4 @@ spawn_pacman()
 spawn_snake()
 spawn_cb()
 spawn_ghost()
+info.setLife(3)
