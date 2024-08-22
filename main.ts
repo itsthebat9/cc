@@ -145,6 +145,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.point, function (sprite, otherSp
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.life, function (sprite, otherSprite) {
     info.changeLifeBy(1)
+    sprites.destroy(heart)
 })
 let cb: Sprite = null
 let heart: Sprite = null
