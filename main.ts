@@ -1,3 +1,7 @@
+namespace SpriteKind {
+    export const point = SpriteKind.create()
+    export const life = SpriteKind.create()
+}
 function spawn_ghost () {
     ghost = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -44,6 +48,32 @@ function spawn_snake () {
     snake.setBounceOnWall(true)
     snake.setVelocity(randint(10, 50), randint(10, 50))
 }
+info.onCountdownEnd(function () {
+    game.gameOver(true)
+    game.setGameOverScoringType(game.ScoringType.HighScore)
+})
+function spawn_coin () {
+    coin = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . 5 5 5 5 5 5 5 . . . . . 
+        . . . 5 5 5 5 f 5 5 5 5 . . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . 5 5 5 5 5 f 5 5 5 5 5 . . . 
+        . . . 5 5 5 5 f 5 5 5 5 . . . . 
+        . . . . 5 5 5 5 5 5 5 . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.point)
+    coin.setPosition(randint(0, 160), randint(0, 120))
+    coin.setStayInScreen(true)
+}
 function spawn_pacman () {
     pacman = sprites.create(assets.image`pacman`, SpriteKind.Player)
     controller.moveSprite(pacman)
@@ -51,8 +81,34 @@ function spawn_pacman () {
 }
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
-    otherSprite.setPosition(randint(10, 50), randint(10, 50))
+    otherSprite.setPosition(randint(0, 160), randint(0, 120))
 })
+function spawn_life () {
+    heart = sprites.create(img`
+        ....................
+        ....................
+        ....................
+        ....2222...2222.....
+        ...222222.222222....
+        ..222222222222222...
+        ..222222222222222...
+        ..222222222222222...
+        ..222222222222222...
+        ..222222222222222...
+        ..222222222222222...
+        ...2222222222222....
+        ....22222222222.....
+        .....222222222......
+        ......2222222.......
+        .......22222........
+        ........222.........
+        .........2..........
+        .........2..........
+        ....................
+        `, SpriteKind.life)
+    heart.setPosition(randint(0, 160), randint(0, 120))
+    heart.setStayInScreen(true)
+}
 function spawn_cb () {
     cb = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -76,8 +132,25 @@ function spawn_cb () {
     cb.setBounceOnWall(true)
     cb.setVelocity(randint(10, 50), randint(10, 50))
 }
+info.onLifeZero(function () {
+    game.setGameOverEffect(true, effects.melt)
+    game.setGameOverMessage(true, "YOU LOSE")
+    game.gameOver(true)
+    game.setGameOverScoringType(game.ScoringType.HighScore)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.point, function (sprite, otherSprite) {
+    info.changeScoreBy(1)
+    sprites.destroy(coin)
+    spawn_coin()
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.life, function (sprite, otherSprite) {
+    info.changeLifeBy(1)
+    sprites.destroy(heart)
+})
 let cb: Sprite = null
+let heart: Sprite = null
 let pacman: Sprite = null
+let coin: Sprite = null
 let snake: Sprite = null
 let ghost: Sprite = null
 spawn_pacman()
@@ -85,3 +158,12 @@ spawn_snake()
 spawn_cb()
 spawn_ghost()
 info.setLife(3)
+info.setScore(0)
+info.startCountdown(30)
+spawn_coin()
+game.onUpdateInterval(5000, function () {
+    spawn_life()
+})
+game.onUpdateInterval(5000, function () {
+    spawn_ghost()
+})
