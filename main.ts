@@ -145,7 +145,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.point, function (sprite, otherSp
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.life, function (sprite, otherSprite) {
     info.changeLifeBy(1)
-    sprites.destroy(heart)
 })
 let cb: Sprite = null
 let heart: Sprite = null
@@ -162,6 +161,7 @@ info.setScore(0)
 info.startCountdown(30)
 spawn_coin()
 game.onUpdateInterval(5000, function () {
+    sprites.destroy(heart)
     spawn_life()
 })
 game.onUpdateInterval(5000, function () {
